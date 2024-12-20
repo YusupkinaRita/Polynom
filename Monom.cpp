@@ -1,4 +1,5 @@
 #include "Monom.h"
+#include <cstdint>
 
 Monom::Monom(double coef, size_t size, int16_t* array){
     _coef = coef;
@@ -10,21 +11,6 @@ double Monom::GetCoef() const {
     return _coef;
 }
 
-void Monom::print() const{
-    if (_coef == 0) return;
-
-    
-    std::cout<<_coef;
-
-    for (size_t i = 0; i < _size; i++){
-        if (_array[i] != 0)
-        {
-            std::cout<<"X"<<i+1; 
-            if (_array[i] != 1)
-                std::cout<<"^"<<_array[i];
-        }
-    }
-}
 
 Monom::Monom(const Monom& mon){
     _size = mon._size;
@@ -52,11 +38,11 @@ Monom& Monom::operator=(const Monom& mon){
 Monom Monom::operator+(const Monom& mon)const{
     Monom a(*this);
     if (a._size != mon._size){
-        throw "Mnogo hochesh";
+        throw "cant add these monoms";
     }
     for (size_t i = 0; i < _size; i ++){
         if (a._array[i] != mon._array[i]){
-            throw "Mnogo hochesh";
+            throw "cant add these monoms";
         }
     }
     a._coef += mon._coef;
@@ -78,11 +64,11 @@ bool Monom::CanOperate(const Monom& mon) const {
 Monom Monom::operator-(const Monom& mon)const{
     Monom a(*this);
     if (a._size != mon._size){
-        throw "Mnogo hochesh";
+        throw "cant substract these monoms";
     }
     for (size_t i = 0; i < _size; i ++){
         if (a._array[i] != mon._array[i]){
-            throw "Mnogo hochesh";
+            throw "cant substract these monoms";
         }
     }
     a._coef -= mon._coef;
@@ -100,6 +86,12 @@ Monom Monom::operator*(const Monom& mon) const{
         array[i] = i < minSize ? _array[i] + mon._array[i] : maxArr[i];
     }
     return Monom(_coef * mon._coef, mSize, array);
+}
+Monom Monom:: operator*(double x) const{
+    double new_coef=_coef*x;
+
+    Monom res=Monom(new_coef,_size, _array);
+    return res;
 }
 
 Monom Monom::operator/(const Monom& mon) const{

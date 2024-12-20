@@ -5,11 +5,30 @@ Polynom::Polynom() {
 }
 
 Polynom::Polynom(const Polynom& tmp) {
-    Node* tmpHead = tmp._head;
-    while (tmpHead != nullptr) {
-        AppendMonom(tmpHead->GetMonom());
-        tmpHead = tmpHead->Next;
+    _head=tmp._head;
+    Node* tmp_next = _head->Next;
+    Node* copy_next=tmp._head->Next;
+    while (copy_next != nullptr) {
+        tmp_next=copy_next;
+        copy_next=copy_next->Next;
+        tmp_next = tmp_next->Next;
     }
+}
+Polynom& Polynom::operator=(const Polynom& p){
+    if (this == &p){
+        return *this;
+    }
+    Polynom res=Polynom();
+    Node* res_tmp=res._head;
+    Node* tmp=p._head;
+    while (tmp!=nullptr){
+        res_tmp=tmp;
+        res_tmp=res_tmp->Next;
+        tmp=tmp->Next;
+    }
+    return res;
+    
+    
 }
 
 void Polynom::AppendMonom(Monom monom) {
@@ -35,14 +54,15 @@ void Polynom::Print() {
     Node* tmp = _head;
     while (tmp != nullptr) {
         if (tmp == _head)
-            tmp->GetMonom().print();
+            std::cout<<tmp->GetMonom();
         else {
             if (tmp->GetMonom().GetCoef() > 0)
                 std::cout << " + ";
-            tmp->GetMonom().print();
+            std::cout<<tmp->GetMonom();
         }
         tmp = tmp->Next;
     }
+    std::cout<<std::endl;
 }
 
 Polynom Polynom::operator+(const Polynom& polynom) const {
@@ -54,12 +74,20 @@ Polynom Polynom::operator+(const Polynom& polynom) const {
         res.AppendMonom(rightPolynom->GetMonom());
         rightPolynom = rightPolynom->Next;
     }
+    res.Print();
     return res;
 }
 
 Polynom Polynom::operator-(const Polynom& polynom) const {
     Polynom res(*this);
+    Node* rightPolynom = polynom._head;
 
+    while (rightPolynom != nullptr)
+    {
+        Monom m_min=rightPolynom->GetMonom()*(-1);
+        res.AppendMonom(m_min);
+        rightPolynom = rightPolynom->Next;
+    }
     return res;
 }
 Polynom Polynom::operator*(const Polynom& polynom) const {
